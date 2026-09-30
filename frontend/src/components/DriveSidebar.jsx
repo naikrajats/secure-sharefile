@@ -8,7 +8,9 @@ import {
   Upload, 
   Link as LinkIcon,
   HardDrive,
-  Trash2
+  Trash2,
+  Flag,
+  ShieldCheck
 } from 'lucide-react';
 
 export default function DriveSidebar({ 
@@ -16,6 +18,8 @@ export default function DriveSidebar({
   onTabChange, 
   onOpenUpload, 
   onOpenShareModal,
+  onOpenReport,
+  isAdmin,
   storageStats,
   onUploadFile
 }) {
@@ -96,6 +100,28 @@ export default function DriveSidebar({
             <ShieldAlert className="w-4 h-4" />
             <span>Security & Audit Logs</span>
           </button>
+
+          <button
+            onClick={onOpenReport}
+            className="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 transition-all hover:bg-slate-900/60 hover:text-slate-200"
+          >
+            <Flag className="w-4 h-4" />
+            <span>Report File or User</span>
+          </button>
+
+          {isAdmin && (
+            <button
+              onClick={() => onTabChange("admin")}
+              className={`w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                currentTab === "admin"
+                  ? "bg-cyan-500/15 text-cyan-400 border border-cyan-500/30"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-900/60"
+              }`}
+            >
+              <ShieldCheck className="w-4 h-4" />
+              <span>Admin Console</span>
+            </button>
+          )}
         </nav>
       </div>
 

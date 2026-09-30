@@ -158,6 +158,75 @@ export const api = {
     return res.json();
   },
 
+  async submitReport(targetType, targetId, reason, details) {
+    const res = await fetch(`${API_BASE}/api/reports`, {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify({ target_type: targetType, target_id: targetId, reason, details }),
+    });
+    if (!res.ok) throw new Error((await res.json()).detail || "Could not submit report");
+    return res.json();
+  },
+
+  async getAdminSummary() {
+    const res = await fetch(`${API_BASE}/api/admin/summary`, { headers: getHeaders() });
+    if (!res.ok) throw new Error((await res.json()).detail || "Could not load admin statistics");
+    return res.json();
+  },
+
+  async getAdminUsers() {
+    const res = await fetch(`${API_BASE}/api/admin/users`, { headers: getHeaders() });
+    if (!res.ok) throw new Error((await res.json()).detail || "Could not load users");
+    return res.json();
+  },
+
+  async setUserActive(userId, isActive) {
+    const res = await fetch(`${API_BASE}/api/admin/users/${userId}/activation`, {
+      method: "PATCH",
+      headers: getHeaders(),
+      body: JSON.stringify({ is_active: isActive }),
+    });
+    if (!res.ok) throw new Error((await res.json()).detail || "Could not update account");
+    return res.json();
+  },
+
+  async getAdminShares() {
+    const res = await fetch(`${API_BASE}/api/admin/shares`, { headers: getHeaders() });
+    if (!res.ok) throw new Error((await res.json()).detail || "Could not load shares");
+    return res.json();
+  },
+
+  async adminRevokeShare(shareId) {
+    const res = await fetch(`${API_BASE}/api/admin/shares/${shareId}/revoke`, {
+      method: "POST",
+      headers: getHeaders(),
+    });
+    if (!res.ok) throw new Error((await res.json()).detail || "Could not revoke share");
+    return res.json();
+  },
+
+  async getAdminActivity() {
+    const res = await fetch(`${API_BASE}/api/admin/activity`, { headers: getHeaders() });
+    if (!res.ok) throw new Error((await res.json()).detail || "Could not load activity");
+    return res.json();
+  },
+
+  async getAdminReports() {
+    const res = await fetch(`${API_BASE}/api/admin/reports`, { headers: getHeaders() });
+    if (!res.ok) throw new Error((await res.json()).detail || "Could not load reports");
+    return res.json();
+  },
+
+  async resolveReport(reportId, reportStatus, note = "") {
+    const res = await fetch(`${API_BASE}/api/admin/reports/${reportId}`, {
+      method: "PATCH",
+      headers: getHeaders(),
+      body: JSON.stringify({ status: reportStatus, resolution_note: note || null }),
+    });
+    if (!res.ok) throw new Error((await res.json()).detail || "Could not update report");
+    return res.json();
+  },
+
   // Public Recipient
   async getPublicShareInfo(token) {
     const res = await fetch(`${API_BASE}/api/public/shares/${token}/info`, {

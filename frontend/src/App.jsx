@@ -29,6 +29,8 @@ import QRCodeModal from './components/QRCodeModal';
 import RecipientView from './components/RecipientView';
 import AuthModal from './components/AuthModal';
 import OpenShareLinkModal from './components/OpenShareLinkModal';
+import AdminCenter from './components/AdminCenter';
+import ReportModal from './components/ReportModal';
 import { api, getAuthToken, removeAuthToken } from './api';
 
 export default function App() {
@@ -47,6 +49,7 @@ export default function App() {
   // Modals state
   const [showShareModal, setShowShareModal] = useState(false);
   const [showOpenShareModal, setShowOpenShareModal] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
   const [authModalConfig, setAuthModalConfig] = useState({ open: false, isRegister: false });
   const [shareDialogFile, setShareDialogFile] = useState(null);
   const [previewFile, setPreviewFile] = useState(null);
@@ -260,6 +263,8 @@ export default function App() {
             onTabChange={setCurrentTab}
             onOpenUpload={() => setShowShareModal(true)}
             onOpenShareModal={() => setShowShareModal(true)}
+            onOpenReport={() => setShowReportModal(true)}
+            isAdmin={Boolean(user?.is_admin)}
             storageStats={storageStats}
             onUploadFile={handleDirectUpload}
           />
@@ -343,6 +348,10 @@ export default function App() {
               <AuditCenter shares={shares} />
             )}
 
+            {currentTab === "admin" && user?.is_admin && (
+              <AdminCenter />
+            )}
+
           </main>
         </div>
       )}
@@ -401,6 +410,16 @@ export default function App() {
         <OpenShareLinkModal
           onClose={() => setShowOpenShareModal(false)}
           onOpen={openSharedDocument}
+        />
+      )}
+
+      {showReportModal && (
+        <ReportModal
+          files={files}
+          onClose={(submitted) => {
+            setShowReportModal(false);
+            if (submitted) alert("Report submitted for administrator review.");
+          }}
         />
       )}
 

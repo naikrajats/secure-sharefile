@@ -23,11 +23,14 @@ class User(Base):
     hashed_password = Column(String(255), nullable=False)
     full_name = Column(String(255), nullable=False)
     created_at = Column(DateTime, default=utc_now)
+    is_active = Column(Boolean, default=True, nullable=False)
+    is_admin = Column(Boolean, default=False, nullable=False)
 
     files = relationship("FileRecord", back_populates="owner", cascade="all, delete-orphan")
     shares = relationship("ShareLink", back_populates="creator", cascade="all, delete-orphan")
     received_shares = relationship("ShareRecipient", back_populates="recipient", cascade="all, delete-orphan")
     share_views = relationship("ShareView", back_populates="viewer")
+    reports = relationship("ContentReport", back_populates="reporter", cascade="all, delete-orphan")
 
 class FileRecord(Base):
     __tablename__ = "files"
@@ -129,4 +132,20 @@ class ShareView(Base):
 
     share = relationship("ShareLink", back_populates="view_events")
     viewer = relationship("User", back_populates="share_views")
+
+class ContentReport(Base):
+    __tablename__ = "content_reports"
+
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    reporter_id = Column(String(36), ForeignKey("users.id"), nullable=False, index=True)
+    target_type = Column(String(16), nullable=False)
+    target_id = Column(String(36), nullable=False, index=True)
+    reason = Column(String(80), nullable=False)
+    details = Column(Text, nullable=True)
+    status = Column(String(16), default="OPEN", nullable=False, index=True)
+    resolution_note = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=utc_now, nullable=False)
+    resolved_at = Column(DateTime, nullable=True)
+
+    reporter = relationship("User", back_populates="reports")
 
